@@ -7,6 +7,9 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "cypress:record": "cypress run --record --key 51db389a-2b86-47e8-9296-5d0993209760"
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:report": "mochawesome-merge cypress/reports/*.json > cypress/reports/report.json && marge cypress/reports/report.json --reportDir cypress/reports/html"
   },
   "keywords": [],
   "author": "",
