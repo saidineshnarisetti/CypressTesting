@@ -12,11 +12,18 @@ jobs:
       # Checkout
       - uses: actions/checkout@v4
 
-      # 🔥 Fix Artifactory issue
-      - name: Use public npm registry
-        run: npm config set registry https://registry.npmjs.org/
+      # 🔥 REMOVE corporate .npmrc influence
+      - name: Remove .npmrc
+        run: rm -f .npmrc
 
-      # 🔥 Cache npm (speed)
+      # 🔥 Force public npm registry globally
+      - name: Set npm registry
+        run: |
+          npm config set registry https://registry.npmjs.org/
+          npm config delete proxy || true
+          npm config delete https-proxy || true
+
+      # 🔥 Cache npm
       - name: Cache npm
         uses: actions/cache@v4
         with:
@@ -25,9 +32,9 @@ jobs:
           restore-keys: |
             npm-
 
-      # 🔥 IMPORTANT FIX → use install instead of ci
+      # 🔥 Install dependencies (force registry again)
       - name: Install dependencies
-        run: npm install
+        run: npm install --registry=https://registry.npmjs.org/
 
       # Run Cypress
       - name: Run Cypress tests
