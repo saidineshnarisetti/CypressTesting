@@ -5,6 +5,13 @@ module.exports = defineConfig({
   allowCypressEnv: false,
 
   e2e: {
+    reporter: 'mochawesome',
+    reporterOptions: {
+      reportDir: 'cypress/reports',
+      overwrite: false,
+      html: false,
+      json: true
+    }
     experimentalStudio: true,
     chromeWebSecurity: false,
     
