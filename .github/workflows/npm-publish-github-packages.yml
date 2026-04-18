@@ -3,23 +3,20 @@ name: Cypress Tests
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repo
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # Checkout
+      - uses: actions/checkout@v4
 
-      # 2. Use public npm registry (fix Artifactory issue)
+      # 🔥 Fix Artifactory issue
       - name: Use public npm registry
         run: npm config set registry https://registry.npmjs.org/
 
-      # 3. Cache npm dependencies
+      # 🔥 Cache npm (speed)
       - name: Cache npm
         uses: actions/cache@v4
         with:
@@ -28,33 +25,26 @@ jobs:
           restore-keys: |
             npm-
 
-      # 4. Cache Cypress binary
-      - name: Cache Cypress binary
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/Cypress
-          key: cypress-${{ hashFiles('package-lock.json') }}
-
-      # 5. Install dependencies (FAST & RELIABLE)
+      # 🔥 IMPORTANT FIX → use install instead of ci
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
-      # 6. Run Cypress tests
+      # Run Cypress
       - name: Run Cypress tests
         run: npx cypress run
 
-      # 7. Generate Mochawesome report
+      # Generate report
       - name: Generate report
         run: npm run cypress:report
 
-      # 8. Upload HTML report
+      # Upload report
       - name: Upload Cypress Report
         uses: actions/upload-artifact@v4
         with:
           name: cypress-report
           path: cypress/reports/html
 
-      # 9. Upload screenshots (only if failed)
+      # Upload screenshots
       - name: Upload screenshots
         if: failure()
         uses: actions/upload-artifact@v4
@@ -62,7 +52,7 @@ jobs:
           name: screenshots
           path: cypress/screenshots
 
-      # 10. Upload videos (always)
+      # Upload videos
       - name: Upload videos
         if: always()
         uses: actions/upload-artifact@v4
