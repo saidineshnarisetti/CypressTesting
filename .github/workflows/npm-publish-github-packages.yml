@@ -9,18 +9,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout
       - uses: actions/checkout@v4
+
+      # 🔥 Override corporate registry
+      - name: Use public npm registry
+        run: npm config set registry https://registry.npmjs.org/
 
       # Install dependencies
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      # Run Cypress with Mochawesome
+      # Run Cypress
       - name: Run Cypress tests
         run: npx cypress run
 
-      # Generate HTML Report
+      # Generate report
       - name: Generate report
         run: npm run cypress:report
 
@@ -30,19 +33,3 @@ jobs:
         with:
           name: cypress-report
           path: cypress/reports/html
-
-      # Upload screenshots (optional)
-      - name: Upload screenshots
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshots
-          path: cypress/screenshots
-
-      # Upload videos (optional)
-      - name: Upload videos
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: videos
-          path: cypress/videos
