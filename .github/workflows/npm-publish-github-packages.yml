@@ -9,11 +9,40 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout
       - uses: actions/checkout@v4
 
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Run Cypress with Mochawesome
+      - name: Run Cypress tests
+        run: npx cypress run
+
+      # Generate HTML Report
+      - name: Generate report
+        run: npm run cypress:report
+
+      # Upload report
+      - name: Upload Cypress Report
+        uses: actions/upload-artifact@v4
         with:
-          record: true
-        env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          name: cypress-report
+          path: cypress/reports/html
+
+      # Upload screenshots (optional)
+      - name: Upload screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: cypress/screenshots
+
+      # Upload videos (optional)
+      - name: Upload videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: videos
+          path: cypress/videos
